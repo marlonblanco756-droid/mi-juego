@@ -85,7 +85,6 @@
 <body>
 
 <div id="contenido" style="display:none; width:100%; max-width:460px;">
-
   <h1>🍃 Konoha</h1>
   <p class="sub">Piedra · Papel · Tijera</p>
 
@@ -115,7 +114,6 @@
   <div class="historial" id="historial">
     <h3>Historial</h3>
   </div>
-
 </div>
 
 <div id="aviso" class="panel" style="max-width:460px; margin-top:40px; text-align:center;">
@@ -137,6 +135,7 @@ if (!usuarioActual) {
 /* ============ localStorage por usuario ============ */
 const kMonedas   = () => "konoha_monedas_"   + usuarioActual;
 const kHistorial = () => "konoha_historial_" + usuarioActual;
+const kRegistro  = () => "konoha_registro_"  + usuarioActual;
 
 function getMonedas() { return parseInt(localStorage.getItem(kMonedas()) || "0", 10); }
 function setMonedas(n) {
@@ -150,6 +149,10 @@ function addHistorial(e) {
   const l = getHistorial(); l.unshift(e);
   localStorage.setItem(kHistorial(), JSON.stringify(l.slice(0, 30)));
   renderHistorial();
+}
+function addRegistro(n) {
+  const r = parseInt(localStorage.getItem(kRegistro()) || "0", 10);
+  localStorage.setItem(kRegistro(), String(r + n));
 }
 
 /* ============ DOM ============ */
@@ -194,11 +197,9 @@ function iniciarJugada(jugador) {
   if (!apuesta || apuesta < 50) { setEstado("La apuesta mínima es 50 monedas.", "error"); return; }
   if (apuesta > getMonedas()) { setEstado("No tienes suficientes monedas.", "error"); return; }
 
-  // Descontar apuesta
   setMonedas(getMonedas() - apuesta);
 
-  // CPU elige al instante (sin retraso)
-  const compu = jugadaAleatoria();
+  const compu = jugadaAleatoria();   // CPU instantánea, sin retraso
   const resultado = resolver(jugador, compu);
 
   let ganancia = 0, texto = "", clase = "";
@@ -218,6 +219,7 @@ function iniciarJugada(jugador) {
   }
 
   setMonedas(getMonedas() + ganancia);
+  addRegistro(ganancia - apuesta);   // neto de la jugada
   setEstado(`${texto}<br><small>Computadora eligió: ${EMOJI[compu]} ${compu}</small>`, clase);
   addHistorial({
     texto: `${new Date().toLocaleTimeString("es-ES")} — Tú ${EMOJI[jugador]} vs ${EMOJI[compu]} → ${resultado} (${ganancia - apuesta >= 0 ? "+" : ""}${ganancia - apuesta})`

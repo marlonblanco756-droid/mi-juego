@@ -61,16 +61,18 @@
   .monedas small { display:block; font-size:.75rem; color:#94a3b8; font-weight:400; }
 
   label { display:block; font-size:.85rem; color:#94a3b8; margin-bottom:6px; }
-  .canje { display: flex; gap: 8px; width: 100%; margin-bottom: 12px; }
-  .canje input {
-    flex: 1; padding: 10px 12px; border-radius: 8px;
-    border: 1px solid #475569; background: #1e293b; color: #e2e8f0;
+  input[type="number"], .canje input {
+    width: 100%; padding: 10px 12px; border-radius: 8px;
+    border: 1px solid #475569; background: #0f172a;
+    color: #e2e8f0; font-size: 1rem;
   }
-  .canje button {
+  .canje { display: flex; gap: 8px; width: 100%; margin-bottom: 12px; }
+  .canje input { flex: 1; background: #1e293b; }
+  .canje button, .btn-accion {
     padding: 10px 16px; border-radius: 8px; border: none;
     background: #f97316; color: #0f172a; font-weight: 700; cursor: pointer;
   }
-  .canje button:hover { background: #fb923c; }
+  .canje button:hover, .btn-accion:hover { background: #fb923c; }
 
   .btn-recargar {
     width: 100%; padding: 12px; border-radius: 10px;
@@ -78,6 +80,13 @@
     color: #22c55e; font-size: .95rem; cursor: pointer; margin-top: 8px;
   }
   .btn-recargar:hover { background: #22c55e; color: #0f172a; }
+
+  .btn-retirar {
+    width: 100%; padding: 12px; border-radius: 10px;
+    border: 1px solid #f97316; background: transparent;
+    color: #f97316; font-size: .95rem; cursor: pointer; margin-top: 8px;
+  }
+  .btn-retirar:hover { background: #f97316; color: #0f172a; }
 
   .btn-ir-jugar {
     display: block; width: 100%; padding: 14px; border-radius: 10px;
@@ -91,6 +100,11 @@
   .estado { text-align: center; min-height: 40px; margin-top: 8px; font-size: .95rem; }
   .gana { color: #22c55e; font-weight: 700; }
   .error { color: #ef4444; }
+  .codigo-box {
+    word-break: break-all; font-size: .75rem; color: #94a3b8;
+    margin-top: 8px; background: #0f172a; padding: 10px;
+    border-radius: 8px; border: 1px dashed #475569;
+  }
 </style>
 </head>
 <body>
@@ -111,7 +125,7 @@
   <div id="loginError"></div>
 </div>
 
-<!-- APP: solo canje + botón ir a jugar -->
+<!-- APP: canje + retiro + ir a jugar -->
 <div id="pantallaApp" class="oculto">
 
   <div class="barra-superior">
@@ -125,6 +139,7 @@
       <small>monedas disponibles</small>
     </div>
 
+    <!-- CANJE -->
     <label>Código de recarga</label>
     <div class="canje">
       <input id="inputCodigo" placeholder="Ej: RC-USU1">
@@ -134,6 +149,13 @@
 
     <p class="nota">¿No tienes código? Pídelo por WhatsApp después de recargar.</p>
     <button class="btn-recargar" id="btnRecargar">💬 Recargar por WhatsApp</button>
+
+    <!-- RETIRO -->
+    <label style="margin-top:18px;">Cantidad a retirar (mínimo 50)</label>
+    <input type="number" id="inputRetiro" placeholder="Ej: 100" min="50" step="10">
+    <button class="btn-retirar" id="btnRetirar">💸 Generar código de retiro</button>
+    <div id="retiroMensaje" class="estado"></div>
+    <div id="codigoRetiro" class="codigo-box" style="display:none;"></div>
 
     <a class="btn-ir-jugar" href="juego.html">🎮 Ir a Jugar</a>
   </div>
@@ -164,6 +186,7 @@ const CODIGOS = {
 let usuarioActual = null;
 const kMonedas   = () => "konoha_monedas_"   + usuarioActual;
 const kCanjeados = () => "konoha_canjeados_" + usuarioActual;
+const kRegistro  = () => "konoha_registro_"  + usuarioActual;
 
 function getMonedas() { return parseInt(localStorage.getItem(kMonedas()) || "0", 10); }
 function setMonedas(n) {
@@ -177,6 +200,8 @@ function addCanjeado(c) {
   const l = getCanjeados(); l.push(c);
   localStorage.setItem(kCanjeados(), JSON.stringify(l));
 }
+function getRegistro() { return parseInt(localStorage.getItem(kRegistro()) || "0", 10); }
+function setRegistro(n) { localStorage.setItem(kRegistro(), String(Math.floor(n))); }
 
 /* ============ DOM ============ */
 const $pantallaLogin = document.getElementById("pantallaLogin");
@@ -188,6 +213,9 @@ const $nombreUsuario = document.getElementById("nombreUsuario");
 const $monedas       = document.getElementById("monedasDisplay");
 const $inputCodigo   = document.getElementById("inputCodigo");
 const $canjeMensaje  = document.getElementById("canjeMensaje");
+const $inputRetiro   = document.getElementById("inputRetiro");
+const $retiroMensaje = document.getElementById("retiroMensaje");
+const $codigoRetiro  = document.getElementById("codigoRetiro");
 
 function renderMonedas() {
   $monedas.textContent = getMonedas().toLocaleString("es-ES");
@@ -202,7 +230,6 @@ function iniciarSesion() {
     $loginError.textContent = "Usuario o contraseña incorrectos."; return;
   }
   usuarioActual = user;
-  // Guardamos el usuario para que juego.html sepa quién es
   localStorage.setItem("konoha_usuario_actual", user);
   $loginError.textContent = "";
   $pantallaLogin.classList.add("oculto");
@@ -242,6 +269,7 @@ document.getElementById("btnCanjear").addEventListener("click", () => {
   }
   const monto = CODIGOS[codigo];
   setMonedas(getMonedas() + monto);
+  setRegistro(getRegistro() + monto);   // suma al registro
   addCanjeado(codigo);
   $inputCodigo.value = "";
   $canjeMensaje.innerHTML = `<span class="gana">✅ Canjeado: +${monto} monedas.</span>`;
@@ -251,6 +279,50 @@ document.getElementById("btnRecargar").addEventListener("click", () => {
   const numero = "54530303";
   const mensaje = encodeURIComponent("Quiero recargar");
   window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
+});
+
+/* ============ RETIRO ============ */
+function b64(str) { return btoa(unescape(encodeURIComponent(str))); }
+function hashSimple(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+  return Math.abs(h).toString(36);
+}
+
+document.getElementById("btnRetirar").addEventListener("click", () => {
+  if (!usuarioActual) return;
+
+  const cantidad = parseInt($inputRetiro.value, 10);
+  const saldoReal = getMonedas();
+  const registros = getRegistro();
+
+  if (!cantidad || cantidad < 50) {
+    $retiroMensaje.innerHTML = '<span class="error">Mínimo de retiro: 50 monedas.</span>';
+    $codigoRetiro.style.display = "none";
+    return;
+  }
+  if (cantidad > saldoReal) {
+    $retiroMensaje.innerHTML = '<span class="error">No puedes retirar más de tu saldo real.</span>';
+    $codigoRetiro.style.display = "none";
+    return;
+  }
+
+  const fecha = new Date().toLocaleString("es-ES");
+
+  // Datos en orden normal: usuario | cantidad deseada | registros | fecha | saldo real
+  const datos = [usuarioActual, cantidad, registros, fecha, saldoReal];
+  const datosAlReves = [...datos].reverse().join("|");
+
+  const cuerpo = b64(datosAlReves);
+  const firma = hashSimple(datosAlReves + "konoha_secret");
+  const codigo = "RET-" + cuerpo + "-" + firma;
+
+  $retiroMensaje.innerHTML = '<span class="gana">✅ Código generado. Envíalo por WhatsApp.</span>';
+  $codigoRetiro.textContent = codigo;
+  $codigoRetiro.style.display = "block";
+
+  // Registrar la operación de retiro
+  setRegistro(registros - cantidad);
 });
 </script>
 </body>
