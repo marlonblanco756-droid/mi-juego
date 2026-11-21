@@ -8,30 +8,18 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #0f172a;
-    color: #e2e8f0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    background: #0f172a; color: #e2e8f0;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 20px;
   }
   h1 { color: #f97316; margin-bottom: 4px; font-size: 1.8rem; text-align:center; }
   .sub { color: #94a3b8; font-size: .85rem; margin-bottom: 20px; text-align:center; }
-
   .panel {
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 14px;
-    padding: 20px;
-    width: 100%;
-    max-width: 460px;
-    margin-bottom: 16px;
+    background: #1e293b; border: 1px solid #334155; border-radius: 14px;
+    padding: 20px; width: 100%; max-width: 460px; margin-bottom: 16px;
   }
-
   .oculto { display: none !important; }
 
-  /* ---------- LOGIN ---------- */
   #pantallaLogin { margin-top: 40px; }
   #pantallaLogin h2 { font-size:1.1rem; color:#f97316; margin-bottom:14px; text-align:center; }
   #pantallaLogin label { display:block; font-size:.85rem; color:#94a3b8; margin-bottom:6px; margin-top:12px; }
@@ -53,9 +41,7 @@
   #pantallaLogin .btn-wa:hover { background: #22c55e; color: #0f172a; }
   #loginError { color: #ef4444; font-size: .85rem; margin-top: 10px; text-align:center; min-height: 20px; }
 
-  /* ---------- APP ---------- */
   #pantallaApp { width: 100%; max-width: 460px; }
-
   .barra-superior {
     display: flex; justify-content: space-between; align-items: center;
     width: 100%; max-width: 460px; margin-bottom: 12px;
@@ -68,18 +54,6 @@
   }
   .barra-superior button:hover { background: #ef4444; color: #0f172a; }
 
-  .tabs {
-    display: flex; gap: 8px; margin-bottom: 16px; width: 100%; max-width: 460px;
-  }
-  .tabs button {
-    flex: 1; padding: 10px; border-radius: 10px;
-    border: 1px solid #475569; background: #1e293b;
-    color: #94a3b8; font-size: .9rem; cursor: pointer;
-  }
-  .tabs button.activo {
-    border-color: #f97316; color: #f97316; font-weight: 700;
-  }
-
   .monedas {
     text-align: center; font-size: 2rem; font-weight: 700;
     color: #22c55e; margin-bottom: 12px;
@@ -87,53 +61,7 @@
   .monedas small { display:block; font-size:.75rem; color:#94a3b8; font-weight:400; }
 
   label { display:block; font-size:.85rem; color:#94a3b8; margin-bottom:6px; }
-  input[type="number"] {
-    width: 100%; padding: 10px 12px; border-radius: 8px;
-    border: 1px solid #475569; background: #0f172a;
-    color: #e2e8f0; font-size: 1rem; margin-bottom: 12px;
-  }
-
-  .botones-juego {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 10px; margin-top: 8px;
-  }
-  .botones-juego button {
-    padding: 16px 8px; font-size: 1.6rem;
-    border: 2px solid #475569; border-radius: 12px;
-    background: #0f172a; color: #e2e8f0; cursor: pointer;
-    transition: all .15s; display: flex; flex-direction: column;
-    align-items: center; gap: 4px;
-  }
-  .botones-juego button span { font-size: .7rem; color:#94a3b8; }
-  .botones-juego button:hover:not(:disabled) {
-    border-color: #f97316; background: #1e293b; transform: translateY(-2px);
-  }
-  .botones-juego button:disabled { opacity: .35; cursor: not-allowed; transform: none; }
-
-  .estado {
-    text-align: center; min-height: 60px; margin-top: 14px;
-    font-size: .95rem; line-height: 1.5;
-  }
-  .estado .pensando { color: #fbbf24; animation: pulse 1s infinite; }
-  .gana { color: #22c55e; font-weight: 700; }
-  .pierde { color: #ef4444; font-weight: 700; }
-  .empata { color: #fbbf24; font-weight: 700; }
-  .error { color: #ef4444; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-  .historial {
-    width: 100%; max-width: 460px; font-size: .8rem; color: #94a3b8;
-    background: #1e293b; border: 1px solid #334155;
-    border-radius: 14px; padding: 14px; max-height: 180px;
-    overflow-y: auto; margin-top: 16px;
-  }
-  .historial h3 { font-size: .85rem; color:#cbd5e1; margin-bottom:8px; }
-  .historial div { padding: 4px 0; border-bottom: 1px solid #334155; }
-  .historial div:last-child { border-bottom: none; }
-
-  .canje {
-    display: flex; gap: 8px; width: 100%; margin-bottom: 12px;
-  }
+  .canje { display: flex; gap: 8px; width: 100%; margin-bottom: 12px; }
   .canje input {
     flex: 1; padding: 10px 12px; border-radius: 8px;
     border: 1px solid #475569; background: #1e293b; color: #e2e8f0;
@@ -151,12 +79,23 @@
   }
   .btn-recargar:hover { background: #22c55e; color: #0f172a; }
 
+  .btn-ir-jugar {
+    display: block; width: 100%; padding: 14px; border-radius: 10px;
+    border: none; background: #f97316; color: #0f172a;
+    font-weight: 700; font-size: 1rem; text-align: center;
+    text-decoration: none; margin-top: 8px;
+  }
+  .btn-ir-jugar:hover { background: #fb923c; }
+
   .nota { font-size:.75rem; color:#64748b; text-align:center; margin-top:12px; }
+  .estado { text-align: center; min-height: 40px; margin-top: 8px; font-size: .95rem; }
+  .gana { color: #22c55e; font-weight: 700; }
+  .error { color: #ef4444; }
 </style>
 </head>
 <body>
 
-<!-- ==================== PANTALLA LOGIN ==================== -->
+<!-- LOGIN -->
 <div id="pantallaLogin" class="panel">
   <h2>🔐 Iniciar sesión en Konoha</h2>
   <p class="sub" style="margin-bottom:0;">Necesitas un usuario y contraseña para entrar.</p>
@@ -172,7 +111,7 @@
   <div id="loginError"></div>
 </div>
 
-<!-- ==================== PANTALLA APP ==================== -->
+<!-- APP: solo canje + botón ir a jugar -->
 <div id="pantallaApp" class="oculto">
 
   <div class="barra-superior">
@@ -180,38 +119,9 @@
     <button id="btnSalir">Salir</button>
   </div>
 
-  <div class="tabs">
-    <button id="tabJugar" class="activo">🎮 Jugar</button>
-    <button id="tabCanjear">🎟️ Canjear</button>
-  </div>
-
-  <!-- ---------- VISTA JUGAR ---------- -->
-  <div id="vistaJugar" class="panel">
+  <div class="panel">
     <div class="monedas">
       <span id="monedasDisplay">0</span>
-      <small>monedas disponibles</small>
-    </div>
-
-    <label>Apuesta (mínimo 50)</label>
-    <input type="number" id="inputApuesta" value="50" min="50" step="10">
-
-    <div class="botones-juego">
-      <button data-jugada="piedra" disabled>✊<span>Piedra</span></button>
-      <button data-jugada="papel"  disabled>✋<span>Papel</span></button>
-      <button data-jugada="tijera" disabled>✌️<span>Tijera</span></button>
-    </div>
-
-    <div class="estado" id="estado">Elige una apuesta y pulsa un botón cuando estén habilitados.</div>
-
-    <div class="historial" id="historial">
-      <h3>Historial</h3>
-    </div>
-  </div>
-
-  <!-- ---------- VISTA CANJEAR ---------- -->
-  <div id="vistaCanjear" class="panel oculto">
-    <div class="monedas">
-      <span id="monedasDisplay2">0</span>
       <small>monedas disponibles</small>
     </div>
 
@@ -220,177 +130,98 @@
       <input id="inputCodigo" placeholder="Ej: RC-USU1">
       <button id="btnCanjear">Canjear</button>
     </div>
-    <div id="canjeMensaje" class="estado" style="min-height:40px;"></div>
+    <div id="canjeMensaje" class="estado"></div>
 
     <p class="nota">¿No tienes código? Pídelo por WhatsApp después de recargar.</p>
     <button class="btn-recargar" id="btnRecargar">💬 Recargar por WhatsApp</button>
+
+    <a class="btn-ir-jugar" href="juego.html">🎮 Ir a Jugar</a>
   </div>
 
 </div>
 
 <script>
-/* ============================================================
-   1. USUARIOS Y CONTRASEÑAS PREPROGRAMADOS
-   (cámbialos por los tuyos; pueden ser tantos como quieras)
-   ============================================================ */
+/* ============ USUARIOS ============ */
 const USUARIOS = {
-  "Marlon":   "konoha123",
-  "Sasuke":   "uchiha456",
-  "Naruto":   "hokage789",
-  "Sakura":   "haruno000",
-  "Kakashi":  "sensei111"
+  "Marlon":  "konoha123",
+  "Sasuke":  "uchiha456",
+  "Naruto":  "hokage789",
+  "Sakura":  "haruno000",
+  "Kakashi": "sensei111"
 };
 
-/* ============================================================
-   2. CÓDIGOS DE RECARGA (3 por monto, desordenados)
-   ============================================================ */
+/* ============ CÓDIGOS ============ */
 const CODIGOS = {
-  // 120
-  "RC-KONOHA-7X2": 120,
-  "RC-USU1":       120,
-  "RC-FIRE-9Q":    120,
-  // 240
-  "RC-USU2":       240,
-  "RC-LEAF-3M":    240,
-  "RC-SHADOW-8P":  240,
-  // 360
-  "RC-USU3":       360,
-  "RC-STORM-5K":   360,
-  "RC-BLADE-2W":   360,
-  // 480
-  "RC-USU4":       480,
-  "RC-SAGE-6R":    480,
-  "RC-SCROLL-1T":  480,
-  // 600
-  "RC-USU5":       600,
-  "RC-RASEN-4L":   600,
-  "RC-CHAKRA-9N":  600,
-  // 720
-  "RC-USU6":       720,
-  "RC-HOKAGE-7Z":  720,
-  "RC-ANBU-3V":    720
+  "RC-KONOHA-7X2": 120, "RC-USU1": 120, "RC-FIRE-9Q": 120,
+  "RC-USU2": 240, "RC-LEAF-3M": 240, "RC-SHADOW-8P": 240,
+  "RC-USU3": 360, "RC-STORM-5K": 360, "RC-BLADE-2W": 360,
+  "RC-USU4": 480, "RC-SAGE-6R": 480, "RC-SCROLL-1T": 480,
+  "RC-USU5": 600, "RC-RASEN-4L": 600, "RC-CHAKRA-9N": 600,
+  "RC-USU6": 720, "RC-HOKAGE-7Z": 720, "RC-ANBU-3V": 720
 };
 
-/* ============================================================
-   3. localStorage (por usuario)
-   ============================================================ */
+/* ============ localStorage ============ */
 let usuarioActual = null;
+const kMonedas   = () => "konoha_monedas_"   + usuarioActual;
+const kCanjeados = () => "konoha_canjeados_" + usuarioActual;
 
-function kMonedas()   { return "konoha_monedas_"   + usuarioActual; }
-function kCanjeados() { return "konoha_canjeados_" + usuarioActual; }
-function kHistorial() { return "konoha_historial_" + usuarioActual; }
-
-function getMonedas() {
-  return parseInt(localStorage.getItem(kMonedas()) || "0", 10);
-}
+function getMonedas() { return parseInt(localStorage.getItem(kMonedas()) || "0", 10); }
 function setMonedas(n) {
   localStorage.setItem(kMonedas(), String(Math.max(0, Math.floor(n))));
   renderMonedas();
 }
 function getCanjeados() {
-  try { return JSON.parse(localStorage.getItem(kCanjeados()) || "[]"); }
-  catch { return []; }
+  try { return JSON.parse(localStorage.getItem(kCanjeados()) || "[]"); } catch { return []; }
 }
 function addCanjeado(c) {
   const l = getCanjeados(); l.push(c);
   localStorage.setItem(kCanjeados(), JSON.stringify(l));
 }
-function getHistorial() {
-  try { return JSON.parse(localStorage.getItem(kHistorial()) || "[]"); }
-  catch { return []; }
-}
-function addHistorial(entry) {
-  const l = getHistorial(); l.unshift(entry);
-  localStorage.setItem(kHistorial(), JSON.stringify(l.slice(0, 30)));
-  renderHistorial();
-}
 
-/* ============================================================
-   4. Referencias DOM
-   ============================================================ */
+/* ============ DOM ============ */
 const $pantallaLogin = document.getElementById("pantallaLogin");
 const $pantallaApp   = document.getElementById("pantallaApp");
 const $loginUser     = document.getElementById("loginUser");
 const $loginPass     = document.getElementById("loginPass");
 const $loginError    = document.getElementById("loginError");
 const $nombreUsuario = document.getElementById("nombreUsuario");
-
-const $monedas    = document.getElementById("monedasDisplay");
-const $monedas2   = document.getElementById("monedasDisplay2");
-const $estado     = document.getElementById("estado");
-const $historial  = document.getElementById("historial");
-const $inputApuesta = document.getElementById("inputApuesta");
-const botonesJuego  = document.querySelectorAll(".botones-juego button");
-
-const $vistaJugar  = document.getElementById("vistaJugar");
-const $vistaCanjear = document.getElementById("vistaCanjear");
-const $tabJugar    = document.getElementById("tabJugar");
-const $tabCanjear  = document.getElementById("tabCanjear");
-
+const $monedas       = document.getElementById("monedasDisplay");
 const $inputCodigo   = document.getElementById("inputCodigo");
 const $canjeMensaje  = document.getElementById("canjeMensaje");
 
-/* ============================================================
-   5. Render
-   ============================================================ */
 function renderMonedas() {
-  const n = getMonedas().toLocaleString("es-ES");
-  $monedas.textContent = n;
-  $monedas2.textContent = n;
-}
-function renderHistorial() {
-  const h = getHistorial();
-  $historial.innerHTML = "<h3>Historial</h3>" +
-    (h.length === 0 ? "<div>Sin jugadas aún.</div>" :
-      h.map(e => `<div>${e.texto}</div>`).join(""));
-}
-function setEstado(html, clase = "") {
-  $estado.innerHTML = `<span class="${clase}">${html}</span>`;
-}
-function bloquearBotones(bloquear) {
-  botonesJuego.forEach(b => b.disabled = bloquear);
+  $monedas.textContent = getMonedas().toLocaleString("es-ES");
 }
 
-/* ============================================================
-   6. Login
-   ============================================================ */
+/* ============ LOGIN ============ */
 function iniciarSesion() {
   const user = $loginUser.value.trim();
   const pass = $loginPass.value;
-
-  if (!user || !pass) {
-    $loginError.textContent = "Escribe usuario y contraseña.";
-    return;
-  }
+  if (!user || !pass) { $loginError.textContent = "Escribe usuario y contraseña."; return; }
   if (!(user in USUARIOS) || USUARIOS[user] !== pass) {
-    $loginError.textContent = "Usuario o contraseña incorrectos.";
-    return;
+    $loginError.textContent = "Usuario o contraseña incorrectos."; return;
   }
-
   usuarioActual = user;
+  // Guardamos el usuario para que juego.html sepa quién es
+  localStorage.setItem("konoha_usuario_actual", user);
   $loginError.textContent = "";
   $pantallaLogin.classList.add("oculto");
   $pantallaApp.classList.remove("oculto");
   $nombreUsuario.textContent = user;
-
-  // Reset vista a Jugar
-  cambiarTab("jugar");
   renderMonedas();
-  renderHistorial();
-  setEstado("Elige una apuesta y pulsa un botón cuando estén habilitados.");
 }
 
 function cerrarSesion() {
   usuarioActual = null;
+  localStorage.removeItem("konoha_usuario_actual");
   $pantallaApp.classList.add("oculto");
   $pantallaLogin.classList.remove("oculto");
-  $loginUser.value = "";
-  $loginPass.value = "";
-  $loginError.textContent = "";
+  $loginUser.value = ""; $loginPass.value = ""; $loginError.textContent = "";
 }
 
 document.getElementById("btnLogin").addEventListener("click", iniciarSesion);
 $loginPass.addEventListener("keydown", e => { if (e.key === "Enter") iniciarSesion(); });
+document.getElementById("btnSalir").addEventListener("click", cerrarSesion);
 
 document.getElementById("btnPedirCredenciales").addEventListener("click", () => {
   const numero = "54530303";
@@ -398,124 +229,17 @@ document.getElementById("btnPedirCredenciales").addEventListener("click", () => 
   window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
 });
 
-document.getElementById("btnSalir").addEventListener("click", cerrarSesion);
-
-/* ============================================================
-   7. Tabs Jugar / Canjear
-   ============================================================ */
-function cambiarTab(cual) {
-  if (cual === "jugar") {
-    $vistaJugar.classList.remove("oculto");
-    $vistaCanjear.classList.add("oculto");
-    $tabJugar.classList.add("activo");
-    $tabCanjear.classList.remove("activo");
-  } else {
-    $vistaJugar.classList.add("oculto");
-    $vistaCanjear.classList.remove("oculto");
-    $tabJugar.classList.remove("activo");
-    $tabCanjear.classList.add("activo");
-  }
-}
-$tabJugar.addEventListener("click", () => cambiarTab("jugar"));
-$tabCanjear.addEventListener("click", () => cambiarTab("canjear"));
-
-/* ============================================================
-   8. Juego
-   ============================================================ */
-const JUGADAS = ["piedra", "papel", "tijera"];
-const EMOJI = { piedra: "✊", papel: "✋", tijera: "✌️" };
-
-function jugadaAleatoria() {
-  return JUGADAS[Math.floor(Math.random() * 3)];
-}
-function resolver(jugador, compu) {
-  if (jugador === compu) return "empata";
-  if (
-    (jugador === "piedra" && compu === "tijera") ||
-    (jugador === "papel"  && compu === "piedra") ||
-    (jugador === "tijera" && compu === "papel")
-  ) return "gana";
-  return "pierde";
-}
-
-let jugando = false;
-
-function iniciarJugada(jugador) {
-  if (jugando || !usuarioActual) return;
-
-  const apuesta = parseInt($inputApuesta.value, 10);
-  if (!apuesta || apuesta < 50) {
-    setEstado("La apuesta mínima es 50 monedas.", "error");
-    return;
-  }
-  if (apuesta > getMonedas()) {
-    setEstado("No tienes suficientes monedas para esa apuesta.", "error");
-    return;
-  }
-
-  jugando = true;
-  bloquearBotones(true);
-  setMonedas(getMonedas() - apuesta);
-
-  const delay = 2000 + Math.floor(Math.random() * 3000);
-  setEstado(`🤖 La computadora está pensando<span class="pensando">...</span>`, "pensando");
-
-  setTimeout(() => {
-    const compu = jugadaAleatoria();
-    const resultado = resolver(jugador, compu);
-
-    let ganancia = 0;
-    let textoResultado = "";
-    let clase = "";
-
-    if (resultado === "gana") {
-      ganancia = Math.floor(apuesta * 1.8);
-      textoResultado = `¡Ganaste! ${EMOJI[jugador]} vs ${EMOJI[compu]} → +${ganancia}`;
-      clase = "gana";
-    } else if (resultado === "empata") {
-      ganancia = Math.floor(apuesta * 0.8);
-      textoResultado = `Empate ${EMOJI[jugador]} vs ${EMOJI[compu]} → recuperas ${ganancia}`;
-      clase = "empata";
-    } else {
-      ganancia = 0;
-      textoResultado = `Perdiste ${EMOJI[jugador]} vs ${EMOJI[compu]} → -${apuesta}`;
-      clase = "pierde";
-    }
-
-    setMonedas(getMonedas() + ganancia);
-    setEstado(`${textoResultado}<br><small>Computadora eligió: ${EMOJI[compu]} ${compu}</small>`, clase);
-
-    addHistorial({
-      texto: `${new Date().toLocaleTimeString("es-ES")} — Tú ${EMOJI[jugador]} vs ${EMOJI[compu]} → ${resultado} (${ganancia - apuesta >= 0 ? "+" : ""}${ganancia - apuesta})`
-    });
-
-    jugando = false;
-    bloquearBotones(false);
-  }, delay);
-}
-
-botonesJuego.forEach(btn => {
-  btn.addEventListener("click", () => iniciarJugada(btn.dataset.jugada));
-});
-
-/* ============================================================
-   9. Canje de códigos
-   ============================================================ */
+/* ============ CANJE ============ */
 document.getElementById("btnCanjear").addEventListener("click", () => {
   if (!usuarioActual) return;
   const codigo = $inputCodigo.value.trim().toUpperCase();
   if (!codigo) { $canjeMensaje.innerHTML = '<span class="error">Escribe un código.</span>'; return; }
-
-  const canjeados = getCanjeados();
-  if (canjeados.includes(codigo)) {
-    $canjeMensaje.innerHTML = '<span class="error">Ese código ya fue canjeado.</span>';
-    return;
+  if (getCanjeados().includes(codigo)) {
+    $canjeMensaje.innerHTML = '<span class="error">Ese código ya fue canjeado.</span>'; return;
   }
   if (!(codigo in CODIGOS)) {
-    $canjeMensaje.innerHTML = '<span class="error">Código inválido.</span>';
-    return;
+    $canjeMensaje.innerHTML = '<span class="error">Código inválido.</span>'; return;
   }
-
   const monto = CODIGOS[codigo];
   setMonedas(getMonedas() + monto);
   addCanjeado(codigo);
@@ -523,21 +247,11 @@ document.getElementById("btnCanjear").addEventListener("click", () => {
   $canjeMensaje.innerHTML = `<span class="gana">✅ Canjeado: +${monto} monedas.</span>`;
 });
 
-/* ============================================================
-   10. Botón recargar WhatsApp (dentro de Canjear)
-   ============================================================ */
 document.getElementById("btnRecargar").addEventListener("click", () => {
   const numero = "54530303";
   const mensaje = encodeURIComponent("Quiero recargar");
   window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
 });
-
-/* ============================================================
-   11. Inicial
-   ============================================================ */
-// Si ya había una sesión guardada, no la restauramos: siempre pide login al recargar.
-renderMonedas();
-renderHistorial();
 </script>
 </body>
 </html>
