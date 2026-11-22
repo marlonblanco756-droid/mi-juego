@@ -136,7 +136,7 @@
   <input id="loginPass" type="password" placeholder="Tu contraseña">
 
   <button id="btnLogin">Entrar</button>
-  <button id="btnPedirCredenciales" class="btn-wa">💬 Pedir usuario y contraseña por WhatsApp</button>
+  <button id="btnPedirCredenciales" class="btn-wa">📱 Pedir usuario y contraseña por SMS</button>
   <div id="loginError"></div>
 </div>
 
@@ -162,8 +162,8 @@
     </div>
     <div id="canjeMensaje" class="estado"></div>
 
-    <p class="nota">¿No tienes código? Pídelo por WhatsApp después de recargar.</p>
-    <button class="btn-recargar" id="btnRecargar">💬 Recargar por WhatsApp</button>
+    <p class="nota">¿No tienes código? Pídelo por SMS después de recargar.</p>
+    <button class="btn-recargar" id="btnRecargar">📱 Recargar por SMS</button>
 
     <!-- RETIRO -->
     <label style="margin-top:18px;">Cantidad a retirar (mínimo 50)</label>
@@ -186,8 +186,8 @@
         <div id="codigoRetiro" class="codigo-box" style="flex:1; margin:0;"></div>
         <button id="btnCopiarRetiro" class="btn-accion" style="padding:10px 14px;">📋 Copiar</button>
       </div>
-      <button class="btn-recargar" id="btnIrWhatsApp" style="margin-top:12px; border-color:#22c55e; color:#22c55e;">
-        💬 Ir a WhatsApp
+      <button class="btn-recargar" id="btnIrSMS" style="margin-top:12px; border-color:#22c55e; color:#22c55e;">
+        📱 Ir a SMS
       </button>
     </div>
 
@@ -208,13 +208,23 @@ const USUARIOS = {
 
 /* ============ CÓDIGOS ============ */
 const CODIGOS = {
-  "RC-KONOHA-7X2": 120, "RC-USU1": 20, "RC-FIRE-9Q": 120,
-  "RC-USUSJNWK2": 240, "RC-LEAF-3M": 240, "RC-SHADOW-8P": 240,
-  "RC-USUJWJKW83": 360, "RC-STORM-5K": 360, "RC-BLADE-2W": 360,
-  "RC-USUSKBDKWO4": 480, "RC-SAGE-6R": 480, "RC-SCROLL-1T": 480,
-  "RC-USUSJDHIS865": 600, "RC-RASEN-4L": 600, "RC-CHAKRA-9N": 600,
-  "RC-USU6SJJW8WY": 720, "RC-HOKAGE-7Z": 720, "RC-ANBU-3V": 720
+  "RC-KONOHA-7X2": 120, "RC-USU1": 120, "RC-FIRE-9Q": 120,
+  "RC-USU2": 240, "RC-LEAF-3M": 240, "RC-SHADOW-8P": 240,
+  "RC-USU3": 360, "RC-STORM-5K": 360, "RC-BLADE-2W": 360,
+  "RC-USU4": 480, "RC-SAGE-6R": 480, "RC-SCROLL-1T": 480,
+  "RC-USU5": 600, "RC-RASEN-4L": 600, "RC-CHAKRA-9N": 600,
+  "RC-USU6": 720, "RC-HOKAGE-7Z": 720, "RC-ANBU-3V": 720
 };
+
+/* ============ NÚMERO SMS ============ */
+const NUMERO_SMS = "+5354530303"; // formato internacional con +
+
+/* ============ Función SMS compatible Android/iOS ============ */
+function abrirSMS(mensaje) {
+  const esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const sep = esIOS ? "&" : "?";
+  window.location.href = `sms:${NUMERO_SMS}${sep}body=${encodeURIComponent(mensaje)}`;
+}
 
 /* ============ localStorage ============ */
 let usuarioActual = null;
@@ -284,9 +294,7 @@ $loginPass.addEventListener("keydown", e => { if (e.key === "Enter") iniciarSesi
 document.getElementById("btnSalir").addEventListener("click", cerrarSesion);
 
 document.getElementById("btnPedirCredenciales").addEventListener("click", () => {
-  const numero = "54530303";
-  const mensaje = encodeURIComponent("Hola, quiero pedir un nombre de usuario y contraseña para jugar a Konoha.");
-  window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
+  abrirSMS("Hola, quiero pedir un nombre de usuario y contraseña para jugar a Konoha.");
 });
 
 /* ============ CANJE ============ */
@@ -309,9 +317,7 @@ document.getElementById("btnCanjear").addEventListener("click", () => {
 });
 
 document.getElementById("btnRecargar").addEventListener("click", () => {
-  const numero = "54530303";
-  const mensaje = encodeURIComponent("Quiero recargar");
-  window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
+  abrirSMS("Quiero recargar");
 });
 
 /* ============ RETIRO ============ */
@@ -372,7 +378,7 @@ document.getElementById("btnConfirmarRetiro").addEventListener("click", () => {
   document.getElementById("confirmacionRetiro").style.display = "none";
   $retiroMensaje.innerHTML = '<span class="gana">✅ Retiro confirmado. Saldo descontado.</span>';
 
-  document.getElementById("btnIrWhatsApp").dataset.codigo = codigo;
+  document.getElementById("btnIrSMS").dataset.codigo = codigo;
 
   retiroPendiente = null;
   $inputRetiro.value = "";
@@ -421,11 +427,9 @@ function fallbackCopiar(texto, callback) {
   document.body.removeChild(ta);
 }
 
-document.getElementById("btnIrWhatsApp").addEventListener("click", () => {
-  const codigo = document.getElementById("btnIrWhatsApp").dataset.codigo || "";
-  const numero = "54530303";
-  const mensaje = encodeURIComponent(`Este es mi código de retiro: ${codigo}`);
-  window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
+document.getElementById("btnIrSMS").addEventListener("click", () => {
+  const codigo = document.getElementById("btnIrSMS").dataset.codigo || "";
+  abrirSMS(`Este es mi código de retiro: ${codigo}`);
 });
 </script>
 </body>
