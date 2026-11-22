@@ -102,9 +102,24 @@
   .error { color: #ef4444; }
   .codigo-box {
     word-break: break-all; font-size: .75rem; color: #94a3b8;
-    margin-top: 8px; background: #0f172a; padding: 10px;
+    background: #0f172a; padding: 10px;
     border-radius: 8px; border: 1px dashed #475569;
   }
+
+  .confirmacion {
+    background: #0f172a; border: 1px solid #fbbf24;
+    border-radius: 10px; padding: 14px; margin-top: 12px;
+  }
+  .confirmacion p { color: #fbbf24; font-size: .9rem; margin-bottom: 12px; text-align: center; }
+  .confirmacion-botones { display: flex; gap: 8px; }
+  .confirmacion-botones button {
+    flex: 1; padding: 10px; border-radius: 8px; border: none;
+    font-weight: 700; cursor: pointer; font-size: .9rem;
+  }
+  .btn-si { background: #22c55e; color: #0f172a; }
+  .btn-si:hover { background: #4ade80; }
+  .btn-no { background: #ef4444; color: #0f172a; }
+  .btn-no:hover { background: #f87171; }
 </style>
 </head>
 <body>
@@ -125,7 +140,7 @@
   <div id="loginError"></div>
 </div>
 
-<!-- APP: canje + retiro + ir a jugar -->
+<!-- APP -->
 <div id="pantallaApp" class="oculto">
 
   <div class="barra-superior">
@@ -154,8 +169,27 @@
     <label style="margin-top:18px;">Cantidad a retirar (mínimo 50)</label>
     <input type="number" id="inputRetiro" placeholder="Ej: 100" min="50" step="10">
     <button class="btn-retirar" id="btnRetirar">💸 Generar código de retiro</button>
+
+    <div id="confirmacionRetiro" class="confirmacion" style="display:none;">
+      <p id="textoConfirmacion"></p>
+      <div class="confirmacion-botones">
+        <button id="btnConfirmarRetiro" class="btn-si">Sí, retirar</button>
+        <button id="btnCancelarRetiro" class="btn-no">Cancelar</button>
+      </div>
+    </div>
+
     <div id="retiroMensaje" class="estado"></div>
-    <div id="codigoRetiro" class="codigo-box" style="display:none;"></div>
+
+    <div id="codigoRetiroBox" style="display:none; margin-top:12px;">
+      <label>Código de retiro</label>
+      <div style="display:flex; gap:8px; align-items:stretch;">
+        <div id="codigoRetiro" class="codigo-box" style="flex:1; margin:0;"></div>
+        <button id="btnCopiarRetiro" class="btn-accion" style="padding:10px 14px;">📋 Copiar</button>
+      </div>
+      <button class="btn-recargar" id="btnIrWhatsApp" style="margin-top:12px; border-color:#22c55e; color:#22c55e;">
+        💬 Ir a WhatsApp
+      </button>
+    </div>
 
     <a class="btn-ir-jugar" href="juego.html">🎮 Ir a Jugar</a>
   </div>
@@ -174,12 +208,12 @@ const USUARIOS = {
 
 /* ============ CÓDIGOS ============ */
 const CODIGOS = {
-  "RC-KONOHA-7X2": 120, "RC-USU1": 20, "RC-FIRE-9Q": 120,
-  "RC-USU2": 20, "RC-LEAF-3M": 240, "RC-SHADOW-8P": 240,
-  "RC-USUA1": 360, "RC-STORM-5K": 360, "RC-BLADE-2W": 360,
-  "RC-USUAR2": 480, "RC-SAGE-6R": 480, "RC-SCROLL-1T": 480,
-  "RC-USU00": 600, "RC-RASEN-4L": 600, "RC-CHAKRA-9N": 600,
-  "RC-USU818": 720, "RC-HOKAGE-7Z": 720, "RC-ANBU-3V": 720
+  "RC-KONOHA-7X2": 120, "RC-USU1": 120, "RC-FIRE-9Q": 120,
+  "RC-USU2": 240, "RC-LEAF-3M": 240, "RC-SHADOW-8P": 240,
+  "RC-USU3": 360, "RC-STORM-5K": 360, "RC-BLADE-2W": 360,
+  "RC-USU4": 480, "RC-SAGE-6R": 480, "RC-SCROLL-1T": 480,
+  "RC-USU5": 600, "RC-RASEN-4L": 600, "RC-CHAKRA-9N": 600,
+  "RC-USU6": 720, "RC-HOKAGE-7Z": 720, "RC-ANBU-3V": 720
 };
 
 /* ============ localStorage ============ */
@@ -215,7 +249,6 @@ const $inputCodigo   = document.getElementById("inputCodigo");
 const $canjeMensaje  = document.getElementById("canjeMensaje");
 const $inputRetiro   = document.getElementById("inputRetiro");
 const $retiroMensaje = document.getElementById("retiroMensaje");
-const $codigoRetiro  = document.getElementById("codigoRetiro");
 
 function renderMonedas() {
   $monedas.textContent = getMonedas().toLocaleString("es-ES");
@@ -269,7 +302,7 @@ document.getElementById("btnCanjear").addEventListener("click", () => {
   }
   const monto = CODIGOS[codigo];
   setMonedas(getMonedas() + monto);
-  setRegistro(getRegistro() + monto);   // suma al registro
+  setRegistro(getRegistro() + monto);
   addCanjeado(codigo);
   $inputCodigo.value = "";
   $canjeMensaje.innerHTML = `<span class="gana">✅ Canjeado: +${monto} monedas.</span>`;
@@ -289,6 +322,8 @@ function hashSimple(str) {
   return Math.abs(h).toString(36);
 }
 
+let retiroPendiente = null;
+
 document.getElementById("btnRetirar").addEventListener("click", () => {
   if (!usuarioActual) return;
 
@@ -298,18 +333,33 @@ document.getElementById("btnRetirar").addEventListener("click", () => {
 
   if (!cantidad || cantidad < 50) {
     $retiroMensaje.innerHTML = '<span class="error">Mínimo de retiro: 50 monedas.</span>';
-    $codigoRetiro.style.display = "none";
+    ocultarRetiro();
     return;
   }
   if (cantidad > saldoReal) {
     $retiroMensaje.innerHTML = '<span class="error">No puedes retirar más de tu saldo real.</span>';
-    $codigoRetiro.style.display = "none";
+    ocultarRetiro();
     return;
   }
 
-  const fecha = new Date().toLocaleString("es-ES");
+  retiroPendiente = { cantidad, saldoReal, registros };
 
-  // Datos en orden normal: usuario | cantidad deseada | registros | fecha | saldo real
+  document.getElementById("textoConfirmacion").textContent =
+    `¿Estás seguro de que deseas retirar ${cantidad} monedas?`;
+  document.getElementById("confirmacionRetiro").style.display = "block";
+  $retiroMensaje.innerHTML = "";
+  document.getElementById("codigoRetiroBox").style.display = "none";
+});
+
+document.getElementById("btnConfirmarRetiro").addEventListener("click", () => {
+  if (!retiroPendiente) return;
+
+  const { cantidad, saldoReal, registros } = retiroPendiente;
+
+  setMonedas(getMonedas() - cantidad);
+  setRegistro(registros - cantidad);
+
+  const fecha = new Date().toLocaleString("es-ES");
   const datos = [usuarioActual, cantidad, registros, fecha, saldoReal];
   const datosAlReves = [...datos].reverse().join("|");
 
@@ -317,12 +367,65 @@ document.getElementById("btnRetirar").addEventListener("click", () => {
   const firma = hashSimple(datosAlReves + "konoha_secret");
   const codigo = "RET-" + cuerpo + "-" + firma;
 
-  $retiroMensaje.innerHTML = '<span class="gana">✅ Código generado. Envíalo por WhatsApp.</span>';
-  $codigoRetiro.textContent = codigo;
-  $codigoRetiro.style.display = "block";
+  document.getElementById("codigoRetiro").textContent = codigo;
+  document.getElementById("codigoRetiroBox").style.display = "block";
+  document.getElementById("confirmacionRetiro").style.display = "none";
+  $retiroMensaje.innerHTML = '<span class="gana">✅ Retiro confirmado. Saldo descontado.</span>';
 
-  // Registrar la operación de retiro
-  setRegistro(registros - cantidad);
+  document.getElementById("btnIrWhatsApp").dataset.codigo = codigo;
+
+  retiroPendiente = null;
+  $inputRetiro.value = "";
+});
+
+document.getElementById("btnCancelarRetiro").addEventListener("click", () => {
+  document.getElementById("confirmacionRetiro").style.display = "none";
+  retiroPendiente = null;
+  $retiroMensaje.innerHTML = '<span class="error">Retiro cancelado.</span>';
+  ocultarRetiro();
+});
+
+function ocultarRetiro() {
+  document.getElementById("codigoRetiroBox").style.display = "none";
+}
+
+document.getElementById("btnCopiarRetiro").addEventListener("click", () => {
+  const codigo = document.getElementById("codigoRetiro").textContent;
+  if (!codigo) return;
+
+  const btn = document.getElementById("btnCopiarRetiro");
+  const original = btn.textContent;
+
+  const marcarCopiado = () => {
+    btn.textContent = "✅ Copiado";
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(codigo).then(marcarCopiado).catch(() => {
+      fallbackCopiar(codigo, marcarCopiado);
+    });
+  } else {
+    fallbackCopiar(codigo, marcarCopiado);
+  }
+});
+
+function fallbackCopiar(texto, callback) {
+  const ta = document.createElement("textarea");
+  ta.value = texto;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); callback(); } catch (e) { alert("No se pudo copiar. Copia manualmente."); }
+  document.body.removeChild(ta);
+}
+
+document.getElementById("btnIrWhatsApp").addEventListener("click", () => {
+  const codigo = document.getElementById("btnIrWhatsApp").dataset.codigo || "";
+  const numero = "54530303";
+  const mensaje = encodeURIComponent(`Este es mi código de retiro: ${codigo}`);
+  window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank");
 });
 </script>
 </body>
