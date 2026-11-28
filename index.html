@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recarga de Diamantes</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+  body {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-height: 100vh; margin: 0;
+    display: flex; justify-content: center; align-items: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fff; border-radius: 16px;
+    padding: 30px; width: 100%; max-width: 450px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  }
+  h1 { color: #1e3c72; text-align: center; margin-top: 0; font-size: 24px; }
+  .desc { color: #666; text-align: center; font-size: 14px; margin-bottom: 25px; }
+  label { display: block; margin: 15px 0 6px; font-weight: 600; color: #333; font-size: 14px; }
+  input, select {
+    width: 100%; padding: 12px; border: 1.5px solid #ddd;
+    border-radius: 8px; font-size: 15px; outline: none;
+  }
+  input:focus, select:focus { border-color: #2a5298; }
+  .price-box {
+    background: #f0f4ff; border-radius: 10px; padding: 15px;
+    margin-top: 20px; text-align: center;
+  }
+  .price-box .label { color: #555; font-size: 14px; }
+  .price-box .amount { font-size: 26px; font-weight: bold; color: #1e3c72; margin-top: 5px; }
+  .price-box .diamantes { font-size: 13px; color: #2a5298; margin-top: 4px; }
+  .buttons { display: flex; gap: 12px; margin-top: 20px; }
+  button {
+    flex: 1; padding: 14px; border: none; border-radius: 8px;
+    font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
+  }
+  .btn-cancel { background: #eee; color: #555; }
+  .btn-cancel:hover { background: #ddd; }
+  .btn-accept { background: #25D366; color: #fff; }
+  .btn-accept:hover { background: #1ebe5b; }
+  .error { color: #d33; font-size: 13px; margin-top: 10px; text-align: center; }
+
+  /* ===== Selector de app (grid 2x2) ===== */
+  .app-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .app-option {
+    padding: 12px 8px; border: 2px solid #ddd; border-radius: 8px;
+    text-align: center; cursor: pointer; font-size: 13px; font-weight: 600;
+    color: #555; transition: 0.2s; user-select: none;
+  }
+  .app-option:hover { border-color: #2a5298; }
+  .app-option.selected { border-color: #25D366; background: #e8f9ee; color: #128C7E; }
+  .app-option .ico { font-size: 22px; display: block; margin-bottom: 3px; }
+
+  /* ===== Modal de confirmación ===== */
+  .modal-bg {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    justify-content: center; align-items: center; padding: 20px; z-index: 100;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 28px;
+    max-width: 380px; width: 100%; text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .modal .icon { font-size: 50px; margin-bottom: 12px; }
+  .modal h3 { margin: 0 0 10px; color: #1e3c72; }
+  .modal p { color: #666; font-size: 14px; margin: 0 0 20px; line-height: 1.5; }
+  .modal .btn-cerrar {
+    width: 100%; padding: 13px; background: #25D366; color: #fff;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>💎 Recarga de Diamantes</h1>
+  <p class="desc">Completa los datos para procesar tu recarga</p>
+
+  <label>ID de tu cuenta *</label>
+  <input type="text" id="idCuenta" placeholder="Ej: 123456789" required>
+
+  <label>Correo electrónico (para confirmar por Gmail) *</label>
+  <input type="email" id="correo" placeholder="tucorreo@gmail.com" required>
+
+  <label>Paquete de diamantes *</label>
+  <select id="paquete"></select>
+
+  <label>Moneda de pago *</label>
+  <select id="moneda">
+    <option value="saldo">Saldo móvil</option>
+    <option value="cup">CUP</option>
+    <option value="usd">USD</option>
+    <option value="usdt">USDT</option>
+  </select>
+
+  <!-- ===== Selector de app (4 opciones) ===== -->
+  <label>¿Por dónde enviar el pedido? *</label>
+  <div class="app-selector">
+    <div class="app-option selected" data-app="whatsapp" onclick="seleccionarApp(this)">
+      <span class="ico">💬</span> WhatsApp
+    </div>
+    <div class="app-option" data-app="business" onclick="seleccionarApp(this)">
+      <span class="ico">💼</span> WhatsApp Business
+    </div>
+    <div class="app-option" data-app="telegram" onclick="seleccionarApp(this)">
+      <span class="ico">✈️</span> Telegram
+    </div>
+    <div class="app-option" data-app="sms" onclick="seleccionarApp(this)">
+      <span class="ico">📱</span> SMS
+    </div>
+  </div>
+
+  <div class="price-box">
+    <div class="label">Total a pagar</div>
+    <div class="amount" id="precio">—</div>
+    <div class="diamantes" id="diamantesInfo"></div>
+  </div>
+
+  <div class="buttons">
+    <button class="btn-cancel" onclick="cancelar()">Cancelar</button>
+    <button class="btn-accept" onclick="aceptar()">Aceptar</button>
+  </div>
+  <div class="error" id="error"></div>
+</div>
+
+<!-- ===== Modal de confirmación ===== -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="icon" id="modalIcon">✅</div>
+    <h3>¡Pedido preparado!</h3>
+    <p>Se abrirá <b id="appNombre">WhatsApp</b> con el mensaje listo.<br>
+       Solo pulsa <b>Enviar</b> para completar tu pedido.</p>
+    <button class="btn-cerrar" onclick="cerrarModal()">Entendido</button>
+  </div>
+</div>
+
+<script>
+  // ====== CONFIGURA AQUÍ TUS DATOS ======
+  const MI_WHATSAPP = "5354530303";   // WhatsApp / WhatsApp Business (sin + ni espacios)
+  const MI_TELEGRAM = "5354530303";   // Usuario o número de Telegram (sin @ ni +)
+  const MI_SMS      = "+5354530303";  // Número para SMS (con + y código país)
+
+  // ====== TARIFAS ======
+  const TARIFAS = [
+    { diamantes: 110,  saldo: 220  },
+    { diamantes: 341,  saldo: 682  },
+    { diamantes: 572,  saldo: 1404 },
+    { diamantes: 1166, saldo: 2332 },
+    { diamantes: 2398, saldo: 4796 },
+    { diamantes: 6160, saldo: 12320 }
+  ];
+
+  const PRECIOS_USD_USDT = [1, 2.7, 4.8, 7.6, 13.9, 25.2];
+
+  // ====== VARIABLES ======
+  const paqEl  = document.getElementById("paquete");
+  const monEl  = document.getElementById("moneda");
+  const precEl = document.getElementById("precio");
+  const diamEl = document.getElementById("diamantesInfo");
+  let appSeleccionada = "whatsapp";
+
+  // ====== SELECTOR DE APP ======
+  function seleccionarApp(el) {
+    document.querySelectorAll(".app-option").forEach(o => o.classList.remove("selected"));
+    el.classList.add("selected");
+    appSeleccionada = el.dataset.app;
+  }
+
+  // ====== LLENAR PAQUETES ======
+  function llenarPaquetes() {
+    paqEl.innerHTML = "";
+    TARIFAS.forEach((t, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = `${t.diamantes} diamantes`;
+      paqEl.appendChild(opt);
+    });
+  }
+  llenarPaquetes();
+
+  // ====== CALCULAR PRECIO ======
+  function calcularPrecio() {
+    const idx    = parseInt(paqEl.value);
+    const moneda = monEl.value;
+    const t      = TARIFAS[idx];
+    let precioTexto = "";
+
+    if (moneda === "saldo") {
+      precioTexto = `${t.saldo} de saldo`;
+    } else if (moneda === "cup") {
+      precioTexto = `${t.saldo * 4} CUP`;
+    } else if (moneda === "usd") {
+      precioTexto = `$${PRECIOS_USD_USDT[idx].toFixed(2)} USD`;
+    } else if (moneda === "usdt") {
+      precioTexto = `${PRECIOS_USD_USDT[idx].toFixed(2)} USDT`;
+    }
+
+    precEl.textContent = precioTexto;
+    diamEl.textContent = `Recibirás ${t.diamantes} diamantes`;
+  }
+
+  paqEl.addEventListener("change", calcularPrecio);
+  monEl.addEventListener("change", calcularPrecio);
+  calcularPrecio();
+
+  // ====== ACEPTAR ======
+  function aceptar() {
+    const id     = document.getElementById("idCuenta").value.trim();
+    const correo = document.getElementById("correo").value.trim();
+    const idx    = parseInt(paqEl.value);
+    const t      = TARIFAS[idx];
+    const moneda = monEl.options[monEl.selectedIndex].text;
+    const precio = precEl.textContent;
+    const errEl  = document.getElementById("error");
+
+    if (!id) { errEl.textContent = "⚠️ Debes poner tu ID"; return; }
+    if (!correo || !correo.includes("@")) { errEl.textContent = "⚠️ Correo inválido"; return; }
+    errEl.textContent = "";
+
+    const msg =
+`💎 *NUEVA RECARGA DE DIAMANTES* 💎
+
+🆔 ID: ${id}
+📧 Correo: ${correo}
+💎 Diamantes a recibir: ${t.diamantes}
+💵 Moneda de pago: ${moneda}
+💰 Total a pagar: ${precio}
+
+✅ Confirmo que los datos son correctos.`;
+
+    const encoded = encodeURIComponent(msg);
+
+    // Icono y nombre para el modal
+    const nombres = {
+      whatsapp: { nombre: "WhatsApp",         icono: "💬" },
+      business: { nombre: "WhatsApp Business", icono: "💼" },
+      telegram: { nombre: "Telegram",         icono: "✈️" },
+      sms:      { nombre: "SMS",              icono: "📱" }
+    };
+    const info = nombres[appSeleccionada];
+    document.getElementById("appNombre").textContent = info.nombre;
+    document.getElementById("modalIcon").textContent = info.icono;
+    document.getElementById("modalBg").classList.add("show");
+
+    // Abrir la app según la elección
+    if (appSeleccionada === "whatsapp") {
+      const url = `whatsapp://send?phone=${MI_WHATSAPP}&text=${encoded}`;
+      setTimeout(() => { window.location.href = `https://wa.me/${MI_WHATSAPP}?text=${encoded}`; }, 1200);
+      window.location.href = url;
+
+    } else if (appSeleccionada === "business") {
+      const url = `whatsapp-business://send?phone=${MI_WHATSAPP}&text=${encoded}`;
+      setTimeout(() => { window.location.href = `https://wa.me/${MI_WHATSAPP}?text=${encoded}`; }, 1200);
+      window.location.href = url;
+
+    } else if (appSeleccionada === "telegram") {
+      // Telegram: abre el chat del usuario con el mensaje escrito
+      const url = `https://t.me/${MI_TELEGRAM}?text=${encoded}`;
+      window.open(url, "_blank");
+
+    } else if (appSeleccionada === "sms") {
+      // SMS: sms:numero?body=mensaje (funciona en móvil)
+      const url = `sms:${MI_SMS}?body=${encoded}`;
+      window.location.href = url;
+    }
+  }
+
+  // ====== MODAL ======
+  function cerrarModal() {
+    document.getElementById("modalBg").classList.remove("show");
+  }
+
+  // ====== CANCELAR ======
+  function cancelar() {
+    if (confirm("¿Seguro que deseas cancelar la recarga?")) {
+      document.getElementById("idCuenta").value = "";
+      document.getElementById("correo").value = "";
+      document.getElementById("error").textContent = "";
+    }
+  }
+</script>
+</body>
+</html>
